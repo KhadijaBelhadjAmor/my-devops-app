@@ -72,37 +72,10 @@ pipeline {
 
         success {
             echo '- Pipeline exécuté avec succès!'
-            emailext(
-                subject: "SUCCESS: Pipeline '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-                body: """
-Le pipeline CI/CD a réussi.
-
-Détails :
-- Job : ${env.JOB_NAME}
-- Build : ${env.BUILD_NUMBER}
-- URL du build : ${env.BUILD_URL}
-- Application déployée : http://${env.JENKINS_URL}/my-devops-app
-                """,
-                to: "votre.email@example.com"
-            )
         }
 
         failure {
             echo '- Pipeline a échoué!'
-            emailext(
-                subject: "FAILED: Pipeline '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-                body: """
-Le pipeline CI/CD a échoué.
-
-Détails :
-- Job : ${env.JOB_NAME}
-- Build : ${env.BUILD_NUMBER}
-- URL du build : ${env.BUILD_URL}
-
-Consultez les logs Jenkins pour plus de détails.
-                """,
-                to: "votre.email@example.com"
-            )
         }
 
         always {
