@@ -16,7 +16,7 @@ pipeline {
         // Stage 1: Checkout du code
         stage('Checkout') {
             steps {
-                echo ' -Récupération du code depuis GitHub'
+                echo ' -Recuperation du code depuis GitHub'
                 git branch: 'main', 
                     url: 'https://github.com/KhadijaBelhadjAmor/my-devops-app.git',
                     credentialsId: 'github-credentials'
@@ -57,15 +57,15 @@ pipeline {
         // Stage 5: Packaging
         stage('Package') {
             steps {
-                echo '- Création du package WAR...'
+                echo '- Creation du package WAR...'
                 sh 'mvn package -DskipTests'
             }
         }
         
-        // Stage 6: Déploiement sur Tomcat
+        // Stage 6: Deploiement sur Tomcat
         stage('Deploy to Tomcat') {
             steps {
-                echo '- Déploiement sur Tomcat...'
+                echo '- Deploiement sur Tomcat...'
                 deploy adapters: [tomcat9(credentialsId: TOMCAT_CREDENTIALS_ID, path: '', url: TOMCAT_URL)], 
                       contextPath: 'my-devops-app',
                       war: 'target/*.war'
@@ -81,7 +81,7 @@ pipeline {
                 
                 body: "Le pipeline CI/CD a réussi. Consulter: ${env.BUILD_URL}"
                 
-                Détails:
+                Details:
                 - Job: ${env.JOB_NAME}
                 - Build: ${env.BUILD_NUMBER}
                 - URL: ${env.BUILD_URL}
@@ -97,7 +97,7 @@ pipeline {
                
                 body: "Le pipeline CI/CD a échoué. Consulter: ${env.BUILD_URL}"
                 
-                Détails:
+                Details:
                 - Job: ${env.JOB_NAME}
                 - Build: ${env.BUILD_NUMBER}
                 - URL: ${env.BUILD_URL}
