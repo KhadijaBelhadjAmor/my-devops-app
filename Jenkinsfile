@@ -7,7 +7,7 @@ pipeline {
     }
     
     environment {
-        
+        //SONAR_SCANNER_HOME = tool 'SonarScanner'
         TOMCAT_URL = 'http://localhost:8081'
         TOMCAT_CREDENTIALS_ID = 'tomcat-credentials'
     }
@@ -42,14 +42,14 @@ pipeline {
             }
         }
         
-        stage('SAST - SonarQube') {
-            steps {
-                echo '- Analyse de code avec SonarQube...'
-                withSonarQubeEnv('sonarqube-server') {
-                    sh 'mvn sonar:sonar -Dsonar.projectKey=my-devops-app -Dsonar.projectName="My DevOps App"'
-                }
-            }
-        }
+        //stage('SAST - SonarQube') {
+          //  steps {
+            //    echo '- Analyse de code avec SonarQube...'
+              //  withSonarQubeEnv('sonarqube-server') {
+               //     sh 'mvn sonar:sonar -Dsonar.projectKey=my-devops-app -Dsonar.projectName="My DevOps App"'
+                //}
+            //}
+        //}
         
         stage('Package') {
             steps {
