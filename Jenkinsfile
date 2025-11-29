@@ -13,25 +13,23 @@ pipeline {
     }
     
     stages {
-        // Stage 1: Checkout du code
+
         stage('Checkout') {
             steps {
-                echo ' -Recuperation du code depuis GitHub'
-                git branch: 'main', 
+                echo ' - Recupération du code depuis GitHub'
+                git branch: 'main',
                     url: 'https://github.com/KhadijaBelhadjAmor/my-devops-app.git',
                     credentialsId: 'github-credentials'
             }
         }
         
-        // Stage 2: Build de l'application
         stage('Build') {
             steps {
-                echo '-Creation de lapplication...'
+                echo '- Création de l’application...'
                 sh 'mvn clean compile'
             }
         }
         
-        // Stage 3: Tests unitaires
         stage('Tests') {
             steps {
                 echo '- Exécution des tests unitaires...'
@@ -44,7 +42,6 @@ pipeline {
             }
         }
         
-        // Stage 4: SAST avec SonarQube
         stage('SAST - SonarQube') {
             steps {
                 echo '- Analyse de code avec SonarQube...'
@@ -54,60 +51,62 @@ pipeline {
             }
         }
         
-        // Stage 5: Packaging
         stage('Package') {
             steps {
-                echo '- Creation du package WAR...'
+                echo '- Création du package WAR...'
                 sh 'mvn package -DskipTests'
             }
         }
         
-        // Stage 6: Deploiement sur Tomcat
         stage('Deploy to Tomcat') {
             steps {
-                echo '- Deploiement sur Tomcat...'
-                deploy adapters: [tomcat9(credentialsId: TOMCAT_CREDENTIALS_ID, path: '', url: TOMCAT_URL)], 
-                      contextPath: 'my-devops-app',
-                      war: 'target/*.war'
+                echo '- Déploiement sur Tomcat...'
+                deploy adapters: [tomcat9(credentialsId: TOMCAT_CREDENTIALS_ID, path: '', url: TOMCAT_URL)],
+                       contextPath: 'my-devops-app',
+                       war: 'target/*.war'
             }
         }
     }
     
     post {
+
         success {
             echo '- Pipeline exécuté avec succès!'
-            emailext (
+            emailext(
                 subject: "SUCCESS: Pipeline '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-                
-                body: "Le pipeline CI/CD a réussi. Consulter: ${env.BUILD_URL}"
-                
-                Details:
-                - Job: ${env.JOB_NAME}
-                - Build: ${env.BUILD_NUMBER}
-                - URL: ${env.BUILD_URL}
-                - Application: http://${env.JENKINS_URL}/my-devops-app
+                body: """
+Le pipeline CI/CD a réussi.
+
+Détails :
+- Job : ${env.JOB_NAME}
+- Build : ${env.BUILD_NUMBER}
+- URL du build : ${env.BUILD_URL}
+- Application déployée : http://${env.JENKINS_URL}/my-devops-app
                 """,
                 to: "votre.email@example.com"
             )
         }
+
         failure {
             echo '- Pipeline a échoué!'
-            emailext (
+            emailext(
                 subject: "FAILED: Pipeline '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-               
-                body: "Le pipeline CI/CD a échoué. Consulter: ${env.BUILD_URL}"
-                
-                Details:
-                - Job: ${env.JOB_NAME}
-                - Build: ${env.BUILD_NUMBER}
-                - URL: ${env.BUILD_URL}
-                - Consulter les logs pour plus de détails
+                body: """
+Le pipeline CI/CD a échoué.
+
+Détails :
+- Job : ${env.JOB_NAME}
+- Build : ${env.BUILD_NUMBER}
+- URL du build : ${env.BUILD_URL}
+
+Consultez les logs Jenkins pour plus de détails.
                 """,
                 to: "votre.email@example.com"
             )
         }
+
         always {
-            echo '-Fin de l exécution du pipeline'
+            echo '- Fin de l’exécution du pipeline'
             cleanWs()
         }
     }
