@@ -4,6 +4,7 @@ pipeline {
     tools {
         maven 'Apache Maven 3.6.3'
         jdk 'openjdk version 21'
+	sonarScanner 'SonarScanner'
     }
     
     environment {
@@ -80,7 +81,6 @@ pipeline {
 
         always {
             echo '- Fin de l’exécution du pipeline'
-            cleanWs()
         }
     }
 }
