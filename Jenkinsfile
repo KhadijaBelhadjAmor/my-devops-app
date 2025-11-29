@@ -7,7 +7,7 @@ pipeline {
     }
     
     environment {
-        SONAR_SCANNER_HOME = tool 'SonarScanner'
+        
         TOMCAT_URL = 'http://localhost:8081'
         TOMCAT_CREDENTIALS_ID = 'tomcat-credentials'
     }
