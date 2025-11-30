@@ -42,14 +42,15 @@ pipeline {
             }
         }
         
-        stage('SAST - SonarQube') {
-            steps {
-                echo '- Analyse de code avec SonarQube...'
-                withSonarQubeEnv('sonarqube-server') {
-                    sh 'mvn sonar:sonar -Dsonar.projectKey=my-devops-app -Dsonar.projectName="My DevOps App"'
-                }
-            }
-        }
+        stage('SCM') {
+    checkout scm
+  }
+  stage('SonarQube Analysis') {
+    def mvn = tool 'Default Maven';
+    withSonarQubeEnv() {
+      sh "${mvn}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=devops"
+    }
+  }
         
         stage('Package') {
             steps {
