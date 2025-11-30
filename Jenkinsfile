@@ -2,30 +2,30 @@ pipeline {
     agent any
     
     tools {
-        maven 'Apache Maven 3.6.3'
-        jdk 'openjdk version 21'
+        maven 'Apache Maven 3.6.3'   // Nom de l'outil Maven configuré dans Jenkins
+        jdk 'openjdk version 21'     // Nom du JDK configuré dans Jenkins
     }
     
     environment {
-        SONAR_SCANNER_HOME = tool 'SonarScanner'
+        SONAR_SCANNER_HOME = tool 'SonarScanner'          // Nom du scanner Sonar configuré dans Jenkins
         TOMCAT_URL = 'http://localhost:8081'
-        TOMCAT_CREDENTIALS_ID = 'tomcat-credentials'
+        TOMCAT_CREDENTIALS_ID = 'tomcat-credentials'     // Credential Jenkins pour Tomcat
     }
     
     stages {
 
         stage('Checkout') {
             steps {
-                echo ' - Recupération du code depuis GitHub'
+                echo ' - Récupération du code depuis GitHub'
                 git branch: 'main',
                     url: 'https://github.com/KhadijaBelhadjAmor/my-devops-app.git',
-                    credentialsId: 'github-credentials'
+                    credentialsId: 'github-credentials'      // Credential Jenkins pour GitHub
             }
         }
         
         stage('Build') {
             steps {
-                echo '- Création de l’application...'
+                echo '- Compilation de l’application...'
                 sh 'mvn clean compile'
             }
         }
@@ -33,7 +33,7 @@ pipeline {
         stage('Tests') {
             steps {
                 echo '- Exécution des tests unitaires...'
-                sh 'mvn test|| true'
+                sh 'mvn test || true'    // || true pour ne pas arrêter le pipeline si un test échoue
             }
             post {
                 always {
@@ -41,16 +41,19 @@ pipeline {
                 }
             }
         }
-        
-        stage('SCM') {
-    checkout scm
-  }
-  stage('SonarQube Analysis') {
-    def mvn = tool 'Default Maven';
-    withSonarQubeEnv() {
-      sh "${mvn}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=devops"
-    }
-  }
+
+        stage('SonarQube Analysis') {
+            steps {
+                echo '- Analyse SonarQube...'
+                script {
+                    def mvn = tool 'Apache Maven 3.6.3'
+                    // Le nom 'SonarQube' doit correspondre au serveur configuré dans Jenkins
+                    withSonarQubeEnv('SonarQube') {
+                        sh "${mvn}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=devops"
+                    }
+                }
+            }
+        }
         
         stage('Package') {
             steps {
